@@ -5,6 +5,7 @@ import LocationPicker from '../LocationPicker';
 import SearchBox from '../SearchBox';
 import { useEffect } from 'react';
 import db from '../../firebase';
+import firebase from 'firebase/compat/app';
 
 const Header = () => {
 
@@ -12,7 +13,7 @@ const Header = () => {
 
     // create 'count' collection if it does not exist
     db.collection('count').get()
-      .then((querySnapshot: any) => {
+      .then((querySnapshot: firebase.firestore.QuerySnapshot) => {
         if (querySnapshot.empty) {
           db.collection('count').add({ count: 0 });
         }
@@ -22,9 +23,9 @@ const Header = () => {
     // increase count by one if this is the first time useEffect is triggered
     const countRef = db.collection('count').doc('count');
 
-    db.runTransaction((transaction:any) => {
+    db.runTransaction((transaction: firebase.firestore.Transaction) => {
       return transaction.get(countRef)
-        .then((doc:any) => {
+        .then((doc: firebase.firestore.DocumentSnapshot) => {
           if (!doc.exists) {
             throw new Error("Document does not exist!");
           }
@@ -41,6 +42,7 @@ const Header = () => {
       .catch((error:any) => console.log("Transaction failed: ", error));
 
   }, []);
+
 
 
   return (
