@@ -20,7 +20,7 @@ const Header = () => {
             console.log("Count initialized to 1");
             return;
           }
-    
+
           const countData = doc.data();
           if (countData) {
             const currCount = countData.count;
@@ -30,13 +30,42 @@ const Header = () => {
           }
         });
     })
-    .catch((error: any) => {
-      console.log("Transaction failed: ", error);
-    });
-    
+      .catch((error: any) => {
+        console.log("Transaction failed: ", error);
+      });
+
 
 
   }, []);
+
+  useEffect(() => {
+    const functionIpAddress = async () => {
+      const ipAddressCollectionRef = db.collection('ipAddress');
+
+      // get user's IP address
+      const ipAddress = await fetch('https://api.ipify.org?format=json')
+        .then(response => response.json())
+        .then(data => data.ip)
+        .catch(error => console.log(error));
+
+      // check if the IP address already exists in the collection
+      const ipAddressDocRef = ipAddressCollectionRef.doc(ipAddress);
+      const ipAddressDoc = await ipAddressDocRef.get();
+
+      if (!ipAddressDoc.exists) {
+        // create a new document with the IP address if it doesn't exist
+        await ipAddressDocRef.set({ count: 1 });
+        console.log("New IP address added to collection with count 1.");
+      } else {
+        // increment the count if the IP address already exists
+        const count = ipAddressDoc.data()?.count || 0;
+        await ipAddressDocRef.update({ count: count + 1 });
+        console.log("IP address count incremented to ", count + 1);
+      }
+    }
+    functionIpAddress()
+
+  }, [])
 
 
 
