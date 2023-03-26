@@ -25,7 +25,9 @@ const HeroArea = () => {
         </p>
         <p className="text-sm">
           <span className="text-gray-400">Coming soon</span>
-          <span className="text-blueviolet-400 ml-1">(Get Ready!)</span>
+          <span style={{
+            color:'text-blueviolet'
+          }} className="text-blueviolet-400 ml-1">(Get Ready!)</span>
         </p>
       </Card>
     </div>
