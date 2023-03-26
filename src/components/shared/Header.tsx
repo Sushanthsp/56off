@@ -10,35 +10,31 @@ const Header = () => {
 
   useEffect(() => {
 
-    // create 'count' collection if it does not exist
-    db.collection('count').get()
-      .then((querySnapshot: any) => {
-        if (querySnapshot.empty) {
-          db.collection('count').add({ count: 0 });
-        }
-      })
-      .catch((error: any) => console.log(error));
-
-    // increase count by one if this is the first time useEffect is triggered
     const countRef = db.collection('count').doc('count');
 
     db.runTransaction((transaction: any) => {
       return transaction.get(countRef)
         .then((doc: any) => {
           if (!doc.exists) {
-            throw new Error("Document does not exist!");
+            transaction.set(countRef, { count: 1 });
+            console.log("Count initialized to 1");
+            return;
           }
-
+    
           const countData = doc.data();
           if (countData) {
             const currCount = countData.count;
             const newCount = currCount + 1;
             transaction.update(countRef, { count: newCount });
+            console.log("Count incremented to ", newCount);
           }
         });
     })
-      .then(() => console.log("Count incremented successfully!"))
-      .catch((error:any) => console.log("Transaction failed: ", error));
+    .catch((error: any) => {
+      console.log("Transaction failed: ", error);
+    });
+    
+
 
   }, []);
 
