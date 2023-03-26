@@ -1,12 +1,16 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
 
-// https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
   build: {
-    chunkSizeWarningLimit: 1500 * 1024, // set limit to 1 MiB,
-    outDir: 'build' // change the output directory to "build"
+    chunkSizeWarningLimit: 1500 * 1024,
+    outDir: 'build',
+    rollupOptions: {
+      input: {
+        main: './index.html', // modify to match the path to your index.html file
+      },
+    },
   },
-},
-) 
+  publicDir: 'public', // modify to match the path to your additional files directory
+});
